@@ -18,7 +18,7 @@ Bashの仕様に基づいたシェルをC言語で2人チームで再実装。
 
 担当範囲：
 
-シェルの「入力解析パイプライン（lexer / parser）」と「シグナル処理基盤」を主に担当した。　
+シェルの「入力解析パイプライン（lexer / parser）」と「シグナル処理基盤」を主に担当した。
 
 - メインループ：readlineによる入力、シグナル状態に応じた制御フロー
 - レキサー：入力文字列のトークン化、クォート処理
@@ -64,7 +64,7 @@ $ ./minishell
 
 	加えて、パイプノード構築時に左側のサブツリーをディープコピーする設計を採用したことで、ノードの再利用とメモリ管理が両立できる構造になった一方、各ノードのフィールドを正しくコピー・解放する責任を明確化する必要があり、メモリ管理の設計に注意を要した。また、終了ステータス（`$?`）を子ノードから更新可能にするため、CMDノードに status pointer (`int *stp`) を埋め込み、AST全体で共有する設計とした。これにより、深い階層からでも `$?` の値を更新できる構造を実現した。
 	- `src/parser/copy_ast.c` の `copy_ast()`：CMDノードの全フィールド（name, path, argv, envp, redirects）を再帰的にディープコピー
-	- `src/pasrser/pasrser_utils.c` の `reset_cmd_node_fields()`：mainの`exit_status`のアドレスをCMDノードの`stp`に設定
+	- `src/parser/parser_utils.c` の `reset_cmd_node_fields()`：mainの`exit_status`のアドレスをCMDノードの`stp`に設定
 
 - チーム開発における開発プロセス設計と運用
 
@@ -76,10 +76,10 @@ $ ./minishell
 
 	BNFで記述されたシェル文法に基づき、再帰下降構文解析を採用した。文法規則ごとに対応するパーサー関数を定義し、トークン列から抽象構文木を構築する設計とした。これにより、文法の構造とコード構造の対応関係が明確になり、新しい構文要素の追加や既存規則の変更が容易な実装となった。
 	- `src/parser/parse_pipe.c` の `parse_pipe()`：パイプ規則のパース
-	- `src/pasrser/parse_cmd.c` の `parse_cmd()`：コマンド規則のパース
+	- `src/parser/parse_cmd.c` の `parse_cmd()`：コマンド規則のパース
 	- `src/parser/make_pipe_node.c` の `make_pipe_node()`：パイプノード構築
 	- `src/parser/make_cmd_node.c` の `make_cmd_node()`：コマンドノード構築（コマンド名、パス解決、argv構築）
-	- `src/pasrser/add_args.c` の `add_args()`、`src/parser/add_redirect.c` の `add_redirect()`：引数とリダイレクトの追加処理
+	- `src/parser/add_args.c` の `add_args()`、`src/parser/add_redirect.c` の `add_redirect()`：引数とリダイレクトの追加処理
 
 - タグ付きunionによる多態的なAST表現
 
